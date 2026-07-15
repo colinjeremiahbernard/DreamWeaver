@@ -1,23 +1,18 @@
-use axum::{
-    routing::get,
-    Json,
-    Router,
-};
-use serde::Serialize;
 
-#[derive(Serialize)]
-struct HealthResponse {
-    status: String,
-    service: String,
-    version: String,
-}
+mod app;
+mod routes;
+mod handlers;
+mod services;
+mod models;
+mod agents;
+mod prompts;
+mod config;
 
 #[tokio::main]
 async fn main() {
     println!("🚀 DreamWeaver backend starting...");
 
-    let app = Router::new()
-        .route("/health", get(health));
+    let app = app::create_router();
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
@@ -28,12 +23,4 @@ async fn main() {
     axum::serve(listener, app)
         .await
         .expect("Server failed");
-}
-
-async fn health() -> Json<HealthResponse> {
-    Json(HealthResponse {
-        status: "ok".to_string(),
-        service: "dreamweaver-backend".to_string(),
-        version: "0.1.0".to_string(),
-    })
 }
