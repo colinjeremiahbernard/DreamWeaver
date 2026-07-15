@@ -10,6 +10,7 @@ mod config;
 
 #[tokio::main]
 async fn main() {
+    dotenvy::dotenv().ok();
     println!("🚀 DreamWeaver backend starting...");
 
     let app = app::create_router();
