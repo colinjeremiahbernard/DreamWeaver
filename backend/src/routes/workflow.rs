@@ -1,9 +1,13 @@
 use axum::Json;
+use futures::future::join_all;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     agents::available_agents,
-    services::agent_executor::AgentExecutor,
+    services::{
+        agent_executor::AgentExecutor,
+        ai_service::AiService,
+    },
 };
 
 #[derive(Deserialize)]
@@ -20,16 +24,18 @@ pub async fn workflow(
     Json(request): Json<WorkflowRequest>,
 ) -> Json<WorkflowResponse> {
 
-    let ai_service = crate::services::ai_service::AiService::new();
+    let tasks = available_agents().into_iter().map(|agent| {
+        let idea = request.idea.clone();
 
-    let executor = AgentExecutor::new(ai_service);
+        async move {
+            let ai_service = AiService::new();
+            let executor = AgentExecutor::new(ai_service);
 
-    let mut outputs = Vec::new();
+            executor.execute(&agent, &idea).await
+        }
+    });
 
-for agent in available_agents() {
-    let output = executor.execute(&agent, &request.idea).await;
-    outputs.push(output);
-}
+    let outputs = join_all(tasks).await;
 
     Json(WorkflowResponse {
         outputs,

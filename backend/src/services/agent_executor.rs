@@ -15,10 +15,29 @@ impl AgentExecutor {
     pub async fn execute(&self, agent: &Agent, input: &str) -> String {
         println!("Running agent: {}", agent.name);
 
+        let system_prompt = match agent.name.as_str() {
+            "writer" => {
+                "You are an award-winning screenwriter. Write compelling stories with strong characters, dialogue, pacing, and emotion."
+            }
+
+            "designer" => {
+                "You are a senior concept artist. Describe environments, lighting, color palettes, costumes, architecture, and cinematic visuals."
+            }
+
+            "researcher" => {
+                "You are a research specialist. Provide scientific accuracy, historical context, technical facts, and useful references."
+            }
+
+            "orchestrator" => {
+                "You are a creative director. Combine ideas into one coherent production plan with clear next steps."
+            }
+
+            _ => "You are a helpful AI assistant.",
+        };
+
         let prompt = format!(
-            "You are the {} agent. Your role is: {}. Task: {}",
-            agent.name,
-            agent.role,
+            "{}\n\nUser Request:\n{}\n\nRespond only in your assigned role.",
+            system_prompt,
             input
         );
 

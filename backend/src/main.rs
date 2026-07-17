@@ -7,6 +7,7 @@ mod models;
 mod agents;
 mod prompts;
 mod config;
+mod creative_director;
 
 #[tokio::main]
 async fn main() {
