@@ -31,7 +31,7 @@ pub async fn workflow(
             let ai_service = AiService::new();
             let executor = AgentExecutor::new(ai_service);
 
-            executor.execute(&agent, &idea).await
+            executor.execute(&agent, &idea, None).await
         }
     });
 

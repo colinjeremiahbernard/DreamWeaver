@@ -1,28 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DreamWeaver AI</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>DreamWeaver 🚀</h1>
-    <p>AI Creative Workflow Orchestrator</p>
+  <!-- Layout Wrapper to separate Sidebar from Main Workspace -->
+  <div class="app-layout">
 
-    <textarea id="idea" placeholder="Describe your creative idea..."></textarea>
+    <!-- Collapsible Sidebar panel -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <h2>History 📁</h2>
+        <button id="close-sidebar-btn" class="icon-btn">×</button>
+      </div>
+      <div id="history-list" class="history-list">
+        <p class="empty-state">No past generations found.</p>
+      </div>
+    </aside>
 
-    <button onclick="createWorkflow()">
-      Create
-    </button>
+    <!-- Main Workspace Container -->
+    <div class="container">
+      <header>
+        <div class="header-left">
+          <button id="toggle-sidebar-btn" class="sidebar-toggle-btn">📂 History</button>
+        </div>
+        <div class="header-center">
+          <h1>DreamWeaver 🚀</h1>
+          <p>AI Creative Workflow Orchestrator</p>
+        </div>
+        <!-- Added: Settings trigger button -->
+        <div class="header-right">
+          <button id="toggle-settings-btn" class="sidebar-toggle-btn">⚙️ Settings</button>
+        </div>
+      </header>
 
-    <div id="results"></div>
+      <main class="workflow-interface">
+        <textarea id="idea" placeholder="Describe your creative idea..."></textarea>
+
+        <button id="create-btn">Create</button>
+
+        <div id="loading-indicator" class="hidden">
+          <div class="spinner"></div>
+          <p id="loading-text">Orchestrating agents... Please wait.</p>
+          <!-- Added: Cancel button to abort hung workflows -->
+          <button id="cancel-btn" class="cancel-btn">🛑 Cancel Generation</button>
+        </div>
+
+        <div id="results"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Added: Model Configuration Settings Modal Overlay -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Orchestrator Settings ⚙️</h2>
+        <button id="close-settings-btn" class="icon-btn">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-group">
+          <label for="model-select">Active LLM Model</label>
+          <select id="model-select">
+            <option value="qwen2.5" selected>Qwen 2.5 (Default)</option>
+            <option value="llama3">Llama 3</option>
+            <option value="mistral">Mistral</option>
+            <option value="phi3">Phi 3</option>
+          </select>
+          <p class="setting-help">Ensure the chosen model is downloaded locally in your Ollama library.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
-
 </body>
 
 </html>

@@ -12,39 +12,47 @@ impl AgentExecutor {
         Self { ai_service }
     }
 
-    pub async fn execute(&self, agent: &Agent, input: &str) -> String {
+    // Updated: Added model_override parameter
+    pub async fn execute(&self, agent: &Agent, input: &str, model_override: Option<String>) -> String {
         println!("Running agent: {}", agent.name);
 
         let system_prompt = match agent.name.as_str() {
-            "writer" => {
-                "You are an award-winning screenwriter. Write compelling stories with strong characters, dialogue, pacing, and emotion."
-            }
-
-            "designer" => {
-                "You are a senior concept artist. Describe environments, lighting, color palettes, costumes, architecture, and cinematic visuals."
-            }
-
             "researcher" => {
-                "You are a research specialist. Provide scientific accuracy, historical context, technical facts, and useful references."
+                "You are an in-universe terminal retrieving raw database evidence. \
+                 Output ONLY the actual primary source documents, classified historical logs, decrypted transcripts, and concrete recorded telemetry found in the world. \
+                 Do NOT write structural templates, outlines, category lists, or future implications. \
+                 Write raw, concrete facts, specific dates, and real in-universe historical files."
             }
-
-            "orchestrator" => {
-                "You are a creative director. Combine ideas into one coherent production plan with clear next steps."
+            "writer" => {
+                "You are a novelist writing the active scene. Output ONLY the finished narrative. \
+                 Write active, immediate character actions, sensory details, and real dialogue. \
+                 Do NOT write summaries, outlines, introductions, or commentary. Start immediately with the first line of the story."
             }
-
+            "designer" => {
+                "You are the cinematographer and set designer. Output ONLY concrete aesthetic specifications: \
+                 actual camera frame directions, lens sizes (e.g. 35mm), precise color hex codes, lighting setups, and tactile set materials. \
+                 Do NOT write generalized guidelines, blueprints, or planning bullet points. Provide the direct production specs."
+            }
+            "critic" => {
+                "You are a fierce redline editor. Provide concrete, direct, line-by-line critical corrections on the story and visuals. \
+                 Point out specific plot holes, weak words, or lighting inconsistencies. Do NOT write a meta-summary or general guidelines."
+            }
             _ => "You are a helpful AI assistant.",
         };
 
         let prompt = format!(
-            "{}\n\nUser Request:\n{}\n\nRespond only in your assigned role.",
+            "System Directive: {}\n\n\
+             Task Input:\n{}\n\n\
+             STRICT CONTEXT RULE: Do NOT write outlines, bulleted categories of 'what should be researched', metadata, or structural frameworks. \
+             You must output the actual, concrete, finalized factual evidence or content immediately:",
             system_prompt,
             input
         );
 
-        let result = self.ai_service.generate(&prompt).await;
+        // Updated: Pass the model override down to the AI service
+        let result = self.ai_service.generate(&prompt, model_override).await;
 
         println!("Completed agent: {}", agent.name);
-
         result
     }
 }

@@ -18,21 +18,25 @@ pub struct AiService {
 }
 
 impl AiService {
-   pub fn new() -> Self {
-    Self {
-        model: std::env::var("OLLAMA_MODEL")
-            .unwrap_or_else(|_| "qwen2.5:7b".to_string()),
+    pub fn new() -> Self {
+        Self {
+            model: std::env::var("OLLAMA_MODEL")
+                .unwrap_or_else(|_| "qwen2.5:7b".to_string()),
 
-        url: std::env::var("OLLAMA_URL")
-            .unwrap_or_else(|_| "http://127.0.0.1:11434".to_string()),
+            url: std::env::var("OLLAMA_URL")
+                .unwrap_or_else(|_| "http://127.0.0.1:11434".to_string()),
+        }
     }
-}
 
-    pub async fn generate(&self, prompt: &str) -> String {
+    // Updated: Accept an optional model string override from the request
+    pub async fn generate(&self, prompt: &str, model_override: Option<String>) -> String {
         let client = reqwest::Client::new();
 
+        // Use the override if present, otherwise fall back to the env/default model
+        let active_model = model_override.unwrap_or_else(|| self.model.clone());
+
         let request = OllamaRequest {
-            model: self.model.clone(),
+            model: active_model,
             prompt: prompt.to_string(),
             stream: false,
         };

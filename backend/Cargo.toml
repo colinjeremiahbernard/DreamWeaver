@@ -24,3 +24,5 @@ tower-http = { version = "0.7.0", features = ["cors"] }
 
 futures = "0.3"
 uuid = { version = "1", features = ["v4", "serde"]}
+
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }
