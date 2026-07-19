@@ -53,6 +53,10 @@ impl AgentExecutor {
         let result = self.ai_service.generate(&prompt, model_override).await;
 
         println!("Completed agent: {}", agent.name);
-        result
+        // Find where the variable `result` is left standing alone at the bottom of the function:
+    match result {
+        Ok(text) => text,
+        Err(e) => format!("Agent generation engine error: {}", e)
     }
 }
+    }
